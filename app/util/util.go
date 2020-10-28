@@ -55,7 +55,7 @@ func SuperRole(c *gin.Context, t int) bool {
 
 	type resultStruct struct {
 		Id   int    `json:"id"`
-		name string `json:"name"`
+		Name string `json:"name"`
 	}
 	var result []resultStruct
 	userId, _ := c.Get("user_id")
@@ -93,7 +93,7 @@ func UploadSetting(c *gin.Context) *model.UploadSetting {
 	}
 
 	//读取的数据为json格式，需要进行解码
-	json.Unmarshal([]byte(uploadSettingStr.(string)), uploadSetting)
+	_ = json.Unmarshal([]byte(uploadSettingStr.(string)), uploadSetting)
 	return uploadSetting
 }
 
@@ -148,7 +148,7 @@ func SiteSettings() map[string]interface{} {
 	cmf.Db.First(option, "option_name = ?", "site_info") // 查询
 
 	m := make(map[string]interface{}, 5)
-	err := json.Unmarshal([]byte([]byte(option.OptionValue)), &m) //第二个参数要地址传递
+	err := json.Unmarshal([]byte(option.OptionValue), &m) //第二个参数要地址传递
 	if err != nil {
 		return m
 	}
@@ -195,7 +195,7 @@ func AuthAccess(c *gin.Context) []model.AuthAccessRule {
 		cmf.Db.Debug().Table(prefix+"auth_access access").Select("access.*,r.name").
 			Joins("INNER JOIN "+prefix+"auth_rule r ON access.rule_id = r.id").Where(queryStr, queryArgs).Scan(&authAccessRule)
 		session.Set("authAccessRule", authAccessRule)
-		session.Save()
+		_ = session.Save()
 
 		return authAccessRule
 

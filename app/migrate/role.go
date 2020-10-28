@@ -15,7 +15,7 @@ type role struct {
 }
 
 func (_ *role) AutoMigrate() {
-	cmf.Db.AutoMigrate(&model.Role{})
+	_ = cmf.Db.AutoMigrate(&model.Role{})
 
 	role := []model.Role{
 		model.Role{

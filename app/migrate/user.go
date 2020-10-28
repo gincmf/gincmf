@@ -13,7 +13,7 @@ type user struct {
 }
 
 func (u *user) AutoMigrate() {
-	cmf.Db.AutoMigrate(&model.User{})
+	_ = cmf.Db.AutoMigrate(&model.User{})
 
 	userResult := cmf.Db.First(&model.User{}, "user_login = ?", "admin") // 查询
 
