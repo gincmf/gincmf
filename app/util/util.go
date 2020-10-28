@@ -27,26 +27,6 @@ func CurrentUser(c *gin.Context) *model.User {
 	return u
 }
 
-/*func CurrentUser(c *gin.Context) *model.User {
-	session := sessions.Default(c)
-	u := &model.User{}
-	gob.Register(u)
-	currentUser := session.Get("current_user")
-	//根据userId获取当前用户信息，不存在写入session
-	if currentUser == nil {
-		userId, _ := c.Get("user_id")
-		notFound := cmf.Db.First(u, "id = ?", userId).RecordNotFound()
-		if !notFound {
-			session.Set("current_user", u)
-			session.Save()
-
-			fmt.Println("c","存入完成")
-		}
-		currentUser = u
-	}
-	return currentUser.(*model.User)
-}*/
-
 type role struct {
 	Id   int    `json:"id"`
 	Name string `json:"name"`
