@@ -16,9 +16,10 @@
 > mysql5.7+
 ## 使用手册 
 ### 安装教程
-第一步：git clone https://github.com/gincmf-team/gincmf
-第二步：下载全部依赖 go get -u  
-第三步：运行 默认端口为8000
+- 第一步：git clone https://github.com/gincmf-team/gincmf
+- 第二步：go mod tidy
+- 第三步：go build
+- 第四步：运行 默认端口为8000
 ### 路径解释
 gincmf  
 |-app //应用目录  
