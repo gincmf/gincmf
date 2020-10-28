@@ -27,7 +27,6 @@ import (
 
 var (
 	globalOauthToken  *oauth2.Token
-	globalTenantToken *oauth2.Token
 	rc                controller.RestController
 	Srv               *server.Server
 )
@@ -125,8 +124,6 @@ func RegisterOauthRouter() {
 			rc.Error(c, "账号密码不正确！", nil)
 			return
 		}
-
-		//cuserId,_ := strconv.Atoi(userID)
 
 		duration := time.Duration(exp) * time.Hour
 

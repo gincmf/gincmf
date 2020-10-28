@@ -27,26 +27,6 @@ func CurrentUser(c *gin.Context) *model.User {
 	return u
 }
 
-/*func CurrentUser(c *gin.Context) *model.User {
-	session := sessions.Default(c)
-	u := &model.User{}
-	gob.Register(u)
-	currentUser := session.Get("current_user")
-	//根据userId获取当前用户信息，不存在写入session
-	if currentUser == nil {
-		userId, _ := c.Get("user_id")
-		notFound := cmf.Db.First(u, "id = ?", userId).RecordNotFound()
-		if !notFound {
-			session.Set("current_user", u)
-			session.Save()
-
-			fmt.Println("c","存入完成")
-		}
-		currentUser = u
-	}
-	return currentUser.(*model.User)
-}*/
-
 type role struct {
 	Id   int    `json:"id"`
 	Name string `json:"name"`
@@ -75,7 +55,7 @@ func SuperRole(c *gin.Context, t int) bool {
 
 	type resultStruct struct {
 		Id   int    `json:"id"`
-		name string `json:"name"`
+		Name string `json:"name"`
 	}
 	var result []resultStruct
 	userId, _ := c.Get("user_id")
@@ -113,7 +93,7 @@ func UploadSetting(c *gin.Context) *model.UploadSetting {
 	}
 
 	//读取的数据为json格式，需要进行解码
-	json.Unmarshal([]byte(uploadSettingStr.(string)), uploadSetting)
+	_ = json.Unmarshal([]byte(uploadSettingStr.(string)), uploadSetting)
 	return uploadSetting
 }
 
@@ -168,7 +148,7 @@ func SiteSettings() map[string]interface{} {
 	cmf.Db.First(option, "option_name = ?", "site_info") // 查询
 
 	m := make(map[string]interface{}, 5)
-	err := json.Unmarshal([]byte([]byte(option.OptionValue)), &m) //第二个参数要地址传递
+	err := json.Unmarshal([]byte(option.OptionValue), &m) //第二个参数要地址传递
 	if err != nil {
 		return m
 	}
@@ -215,7 +195,7 @@ func AuthAccess(c *gin.Context) []model.AuthAccessRule {
 		cmf.Db.Debug().Table(prefix+"auth_access access").Select("access.*,r.name").
 			Joins("INNER JOIN "+prefix+"auth_rule r ON access.rule_id = r.id").Where(queryStr, queryArgs).Scan(&authAccessRule)
 		session.Set("authAccessRule", authAccessRule)
-		session.Save()
+		_ = session.Save()
 
 		return authAccessRule
 
