@@ -2,6 +2,7 @@ package main
 
 import (
 	"gincmf/app/migrate"
+	"gincmf/plugins"
 	"gincmf/router"
 	cmf "github.com/gincmf/cmf/bootstrap"
 )
@@ -15,8 +16,13 @@ func main() {
 
 	//初始化网页路由设置
 	router.WebListenRouter()
+
 	// 数据库迁移
 	migrate.AutoMigrate()
+
+	// 注册插件
+	plugins.AutoRegister()
+
 	//启动服务
 	cmf.Start()
 	//执行数据库迁移
