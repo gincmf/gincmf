@@ -4,6 +4,7 @@ import (
 	"gincmf/app/controller/api/admin"
 	"gincmf/app/controller/common"
 	"gincmf/app/middleware"
+
 	cmf "github.com/gincmf/cmf/bootstrap"
 )
 
