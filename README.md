@@ -8,19 +8,8 @@
 * REST API支持
 * 独立核心代码包cmf
 
-## 环境推荐
-> Go1.11+  
 
-> nginx-1.17.10+ 
-
-> mysql5.7+
-## 使用手册 
-### 安装教程
-- 第一步：git clone https://github.com/gincmf-team/gincmf
-- 第二步：go mod tidy
-- 第三步：go build
-- 第四步：运行 默认端口为8000
-### 路径解释
+## 路径解释
 gincmf  
 |-app //应用目录  
 | |-controller //控制器目录  
@@ -41,6 +30,5 @@ gincmf
 |-go.sum  //模块依赖  
 |-main.go  //入口文件  
 |_readme.md
-### 下载gincmf代码
-推荐使用git下载  
-> git clone https://github.com/gincmf-team/gincmf
+
+#### 更多详情参考 [wiki](https://github.com/gincmf-team/gincmf/wiki)
