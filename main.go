@@ -11,6 +11,7 @@ import (
 func main() {
 	//初始化配置设置
 	cmf.Initialize("./conf/config.json")
+
 	//初始化路由设置
 	router.ApiListenRouter()
 
