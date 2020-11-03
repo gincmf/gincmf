@@ -70,33 +70,6 @@ func RegisterOauthRouter() {
 
 	manager.MapClientStorage(clientStore)
 	Srv = server.NewServer(server.NewConfig(), manager)
-	Srv.SetPasswordAuthorizationHandler(func(username, password string) (userID string, err error) {
-
-		type User struct {
-			Id           int
-			UserType     int
-			Gender       int
-			Birthday     int
-			UserLogin    string `gorm:"type:varchar(60);not null"`
-			UserPass     string `gorm:"type:varchar(64);not null"`
-			UserNickname string
-			Avatar       string
-			Signature    string
-			Mobile       string
-		}
-
-		u := &User{}
-		userResult := cmf.Db.First(u, "user_login = ?", username) // 查询
-		if userResult.RowsAffected > 0 {
-			//验证密码
-			if util.GetMd5(password) == u.UserPass {
-				userID = strconv.Itoa(u.Id)
-			}
-			return userID, nil
-		}
-		return "", errors.New("当前用户不存在！")
-
-	})
 
 	cmf.Post("api/oauth/token", func(c *gin.Context) {
 
@@ -116,6 +89,35 @@ func RegisterOauthRouter() {
 			rc.Error(c, "失效时间应该是整数，单位为小时！", nil)
 			return
 		}
+
+		Srv.SetPasswordAuthorizationHandler(func(username, password string) (userID string, err error) {
+
+			type User struct {
+				Id           int
+				UserType     int
+				Gender       int
+				Birthday     int
+				UserLogin    string `gorm:"type:varchar(60);not null"`
+				UserPass     string `gorm:"type:varchar(64);not null"`
+				UserNickname string
+				Avatar       string
+				Signature    string
+				Mobile       string
+			}
+
+			u := &User{}
+			userResult := cmf.NewDb().First(u, "user_login = ?", username) // 查询
+			if userResult.RowsAffected > 0 {
+				//验证密码
+				if util.GetMd5(password) == u.UserPass {
+					userID = strconv.Itoa(u.Id)
+				}
+				return userID, nil
+			}
+			return "", errors.New("当前用户不存在！")
+
+		})
+
 
 		fn := Srv.PasswordAuthorizationHandler
 		userID, err := fn(username, password)

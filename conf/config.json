@@ -23,13 +23,6 @@
       "charset": "utf8mb4",
       "prefix": "cmf_",
       "authcode": "XVlBzgbaiCMRAjWwhT"
-    },
-    "redis": {
-      "type": "redis",
-      "host": "127.0.0.1",
-      "password": "",
-      "port": "6379",
-      "database": 0
     }
   }
 }

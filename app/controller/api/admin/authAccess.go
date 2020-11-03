@@ -44,7 +44,7 @@ func (rest *AuthAccessController) Show(c *gin.Context) {
 	}
 
 	role := model.Role{}
-	err := cmf.Db.Where("id = ?",rewrite.Id).First(&role).Error
+	err := cmf.NewDb().Where("id = ?",rewrite.Id).First(&role).Error
 
 	if err != nil {
 		rest.rc.Error(c,"查询角色失败！请联系管理员处理",nil)
@@ -53,7 +53,7 @@ func (rest *AuthAccessController) Show(c *gin.Context) {
 
 	var access []model.AuthAccess
 
-	cmf.Db.Where("role_id = ?",role.Id).Find(&access)
+	cmf.NewDb().Where("role_id = ?",role.Id).Find(&access)
 
 	var rule []int
 	for _, v := range access{
@@ -111,11 +111,11 @@ func (rest *AuthAccessController) Edit(c *gin.Context) {
 		CreateAt: time.Now().Unix(),
 	}
 
-	cmf.Db.Model(&role).Where("id = ?",rewrite.Id).Updates(role)
+	cmf.NewDb().Model(&role).Where("id = ?",rewrite.Id).Updates(role)
 
 	// 查询当前存在的auth_access
 	var access []model.AuthAccess
-	cmf.Db.Where("role_id = ?",rewrite.Id).Find(&access)
+	cmf.NewDb().Where("role_id = ?",rewrite.Id).Find(&access)
 
 	var arrTemp []interface{}
 	for _,v := range roleAccess {
@@ -127,7 +127,7 @@ func (rest *AuthAccessController) Edit(c *gin.Context) {
 	for _,v := range access {
 		ruleId := strconv.Itoa(v.RuleId)
 		if !inArray(ruleId,arrTemp) {
-			cmf.Db.Where("rule_id = ?",ruleId).Delete(&model.AuthAccess{})
+			cmf.NewDb().Where("rule_id = ?",ruleId).Delete(&model.AuthAccess{})
 		}
 	}
 
@@ -141,7 +141,7 @@ func (rest *AuthAccessController) Edit(c *gin.Context) {
 	for _,v := range roleAccess {
 		if !inArray(v,arrTemp) {
 			ruleId,_ := strconv.Atoi(v)
-			cmf.Db.Create(&model.AuthAccess{RoleId: rewrite.Id,RuleId: ruleId})
+			cmf.NewDb().Create(&model.AuthAccess{RoleId: rewrite.Id,RuleId: ruleId})
 		}
 	}
 
@@ -183,7 +183,7 @@ func (rest *AuthAccessController) Store(c *gin.Context) {
 		CreateAt: time.Now().Unix(),
 	}
 
-	cmf.Db.Where("name = ?",name).FirstOrCreate(&role)
+	cmf.NewDb().Where("name = ?",name).FirstOrCreate(&role)
 
 	if role.Id == 0 {
 		rest.rc.Error(c,"创建角色失败！请联系管理员",nil)
@@ -196,7 +196,7 @@ func (rest *AuthAccessController) Store(c *gin.Context) {
 			RoleId: role.Id,
 			RuleId: ruleId,
 		}
-		cmf.Db.Where("role_id = ? AND rule_id = ?",role.Id,ruleId).FirstOrCreate(&roleAccess)
+		cmf.NewDb().Where("role_id = ? AND rule_id = ?",role.Id,ruleId).FirstOrCreate(&roleAccess)
 	}
 
 	rest.rc.Success(c, "操作成功！", role.Id)

@@ -29,7 +29,7 @@ type tempAuthorize struct {
 
 func (rest *AuthorizeController) Get(c *gin.Context) {
 	var adminMenu []tempAuthorize
-	result := cmf.Db.Find(&adminMenu)
+	result := cmf.NewDb().Find(&adminMenu)
 
 	if result.RowsAffected == 0 {
 		controller.RestController{}.Error(c, "暂无菜单,请联系管理员添加！", nil)
@@ -51,7 +51,7 @@ func (rest *AuthorizeController) Show(c *gin.Context) {
 
 	var adminMenu []tempAuthorize
 	prefix := cmf.Conf().Database.Prefix
-	result := cmf.Db.Debug().Table(prefix + "admin_menu m").
+	result := cmf.NewDb().Debug().Table(prefix + "admin_menu m").
 		Select("r.id as rule_id,m.id,m.unique_name,m.parent_id,m.name,m.path,m.icon,m.hide_in_menu,m.list_order").
 		Joins("INNER JOIN  " + prefix + "auth_rule r ON m.unique_name = r.name").Scan(&adminMenu)
 

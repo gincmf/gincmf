@@ -66,8 +66,8 @@ func (rest *UserController) Get(c *gin.Context) {
 
 	var total int64 = 0
 
-	cmf.Db.Where(queryStr, queryArgs...).Find(&user).Count(&total)
-	result := cmf.Db.Where(queryStr, queryArgs...).Limit(intPageSize).Offset((intCurrent - 1) * intPageSize).Find(&user)
+	cmf.NewDb().Where(queryStr, queryArgs...).Find(&user).Count(&total)
+	result := cmf.NewDb().Where(queryStr, queryArgs...).Limit(intPageSize).Offset((intCurrent - 1) * intPageSize).Find(&user)
 
 	if result.RowsAffected == 0 {
 		rest.rc.Error(c, "该页码内容不存在！", nil)
@@ -119,7 +119,7 @@ func (rest *UserController) Show(c *gin.Context) {
 	queryArgs := []interface{}{rewrite.Id, "1"}
 
 	user := model.User{}
-	cmf.Db.Where(query, queryArgs...).First(&user)
+	cmf.NewDb().Where(query, queryArgs...).First(&user)
 
 	type resultStruct struct {
 		model.User
@@ -127,7 +127,7 @@ func (rest *UserController) Show(c *gin.Context) {
 	}
 
 	var roleUser []model.RoleUser
-	cmf.Db.Where("user_id = ?", user.Id).Find(&roleUser)
+	cmf.NewDb().Where("user_id = ?", user.Id).Find(&roleUser)
 
 	var role []int
 	for _, v := range roleUser {
@@ -180,7 +180,7 @@ func (rest *UserController) Edit(c *gin.Context) {
 
 	user := model.User{}
 
-	result := cmf.Db.Where("user_login = ?", userLogin).First(&user)
+	result := cmf.NewDb().Where("user_login = ?", userLogin).First(&user)
 	if result.RowsAffected == 0 {
 		rest.rc.Error(c, "用户不存在！", nil)
 		return
@@ -199,14 +199,14 @@ func (rest *UserController) Edit(c *gin.Context) {
 		user.UserPass = util.GetMd5(password)
 	}
 
-	err := cmf.Db.Save(&user).Error
+	err := cmf.NewDb().Save(&user).Error
 	if err != nil {
 		rest.rc.Error(c, "更新用户出错，请联系管理员！！", nil)
 		return
 	}
 
 	// 删除原来角色
-	cmf.Db.Where("user_id = ?", rewrite.Id).Delete(&model.RoleUser{})
+	cmf.NewDb().Where("user_id = ?", rewrite.Id).Delete(&model.RoleUser{})
 
 	// 存入用户角色
 	for _, v := range roleIds {
@@ -215,7 +215,7 @@ func (rest *UserController) Edit(c *gin.Context) {
 			RoleId: roleId,
 			UserId: rewrite.Id,
 		}
-		cmf.Db.Create(&roleUser)
+		cmf.NewDb().Create(&roleUser)
 	}
 
 	rest.rc.Success(c, "更新成功！", nil)
@@ -266,14 +266,14 @@ func (rest *UserController) Store(c *gin.Context) {
 		UserStatus:   1,
 	}
 
-	result := cmf.Db.Where("user_login = ?", userLogin).First(&model.User{})
+	result := cmf.NewDb().Where("user_login = ?", userLogin).First(&model.User{})
 
 	if result.RowsAffected > 0 {
 		rest.rc.Error(c, "用户已存在！", nil)
 		return
 	}
 
-	err := cmf.Db.Create(&user).Error
+	err := cmf.NewDb().Create(&user).Error
 	if err != nil {
 		rest.rc.Error(c, "创建用户出错，请联系管理员！！", nil)
 		return
@@ -290,7 +290,7 @@ func (rest *UserController) Store(c *gin.Context) {
 			RoleId: roleId,
 			UserId: userId,
 		}
-		cmf.Db.Create(&roleUser)
+		cmf.NewDb().Create(&roleUser)
 	}
 
 	rest.rc.Success(c, "操作成功！", user)

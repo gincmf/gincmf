@@ -59,8 +59,8 @@ func (rest *RoleController) Get(c *gin.Context) {
 
 	var total int64 = 0
 
-	cmf.Db.Where(queryStr, queryArgs...).Find(&role).Count(&total)
-	result := cmf.Db.Limit(intPageSize).Where(queryStr, queryArgs...).Offset((intCurrent - 1) * intPageSize).Find(&role)
+	cmf.NewDb().Where(queryStr, queryArgs...).Find(&role).Count(&total)
+	result := cmf.NewDb().Limit(intPageSize).Where(queryStr, queryArgs...).Offset((intCurrent - 1) * intPageSize).Find(&role)
 
 	if result.RowsAffected == 0 {
 		rest.rc.Error(c, "该页码内容不存在！", role)
