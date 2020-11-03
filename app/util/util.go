@@ -2,12 +2,14 @@ package util
 
 import (
 	"encoding/json"
+	"fmt"
 	"gincmf/app/model"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	cmf "github.com/gincmf/cmf/bootstrap"
 	"log"
 	"os"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -23,7 +25,7 @@ func CurrentAdminId(c *gin.Context) string {
 func CurrentUser(c *gin.Context) *model.User {
 	u := &model.User{}
 	userId, _ := c.Get("user_id")
-	cmf.Db.First(u, "id = ?", userId)
+	cmf.NewDb().First(u, "id = ?", userId)
 	return u
 }
 
@@ -43,7 +45,7 @@ func CurrentRole(c *gin.Context) []role {
 func GetRoleById(userId int) []role {
 	var result []role
 	prefix := cmf.Conf().Database.Prefix
-	cmf.Db.Table(prefix+"role_user ru").Select("r.id,r.name").
+	cmf.NewDb().Table(prefix+"role_user ru").Select("r.id,r.name").
 		Joins("INNER JOIN "+prefix+"role r ON ru.role_id = r.id").
 		Where("user_id = ?", userId).
 		Scan(&result)
@@ -65,7 +67,7 @@ func SuperRole(c *gin.Context, t int) bool {
 	}
 
 	prefix := cmf.Conf().Database.Prefix
-	cmf.Db.Table(prefix+"role_user ru").Select("r.id,r.name").
+	cmf.NewDb().Table(prefix+"role_user ru").Select("r.id,r.name").
 		Joins("INNER JOIN "+prefix+"role r ON ru.role_id = r.id").
 		Where("ru.user_id = ?", userId).
 		Scan(&result)
@@ -84,7 +86,7 @@ func UploadSetting(c *gin.Context) *model.UploadSetting {
 	option := &model.Option{}
 	uploadSetting := &model.UploadSetting{}
 	if uploadSettingStr == nil {
-		uploadResult := cmf.Db.First(option, "option_name = ?", "upload_setting") // 查询
+		uploadResult := cmf.NewDb().First(option, "option_name = ?", "upload_setting") // 查询
 		if uploadResult.RowsAffected > 0 {
 			uploadSettingStr = option.OptionValue
 			//存入session
@@ -100,7 +102,7 @@ func UploadSetting(c *gin.Context) *model.UploadSetting {
 //添加用户操作日志
 func SetLog(c *gin.Context, module string, controller string, action string, message string) {
 	currentUser := CurrentUser(c)
-	cmf.Db.Create(&model.Log{
+	cmf.NewDb().Create(&model.Log{
 		ModuleName:     module,
 		ControllerName: controller,
 		ActionName:     action,
@@ -145,7 +147,7 @@ func TrimAll(s string) string {
 // 获取数据库配置信息
 func SiteSettings() map[string]interface{} {
 	option := &model.Option{}
-	cmf.Db.First(option, "option_name = ?", "site_info") // 查询
+	cmf.NewDb().First(option, "option_name = ?", "site_info") // 查询
 
 	m := make(map[string]interface{}, 5)
 	err := json.Unmarshal([]byte(option.OptionValue), &m) //第二个参数要地址传递
@@ -192,7 +194,7 @@ func AuthAccess(c *gin.Context) []model.AuthAccessRule {
 
 		var authAccessRule []model.AuthAccessRule
 		prefix := cmf.Conf().Database.Prefix
-		cmf.Db.Debug().Table(prefix+"auth_access access").Select("access.*,r.name").
+		cmf.NewDb().Debug().Table(prefix+"auth_access access").Select("access.*,r.name").
 			Joins("INNER JOIN "+prefix+"auth_rule r ON access.rule_id = r.id").Where(queryStr, queryArgs).Scan(&authAccessRule)
 		session.Set("authAccessRule", authAccessRule)
 		_ = session.Save()
@@ -204,3 +206,28 @@ func AuthAccess(c *gin.Context) []model.AuthAccessRule {
 	return res.([]model.AuthAccessRule)
 
 }
+
+func CurrentDate() (string,string, string){
+	year,month,day := time.Now().Date()
+	yearStr := strconv.Itoa(year)
+	monthStr := strconv.Itoa(int(month))
+	if month < 10 {
+		monthStr = "0"+monthStr
+	}
+	dayStr := strconv.Itoa(day)
+	if day < 10 {
+		dayStr = "0"+dayStr
+	}
+
+	return yearStr,monthStr,dayStr
+}
+
+func SetIncr(key string) int64 {
+	val ,err := cmf.NewRedisDb().Incr(key).Result()
+	if err != nil {
+		_,_,line,_ := runtime.Caller(0)
+		fmt.Println("redis err"+strconv.Itoa(line),err.Error())
+	}
+	return val
+}
+
