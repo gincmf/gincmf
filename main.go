@@ -2,15 +2,19 @@ package main
 
 import (
 	"gincmf/app/migrate"
+	"gincmf/app/util"
 	"gincmf/plugins"
 	"gincmf/router"
 	cmf "github.com/gincmf/cmf/bootstrap"
 )
 
+
+
 // test commit
 func main() {
+
 	//初始化配置设置
-	cmf.Initialize("./conf/config.json")
+	cmf.Initialize(util.CurrentPath() + "/conf/config.json")
 
 	//初始化路由设置
 	router.ApiListenRouter()

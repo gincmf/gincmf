@@ -3,6 +3,11 @@
 
 # Gincmf1.0.0 让开发变得简单而快乐
 
+## 更新日志
+* 2020-11-04 支持七牛云
+* 2020-11-03 支持插件开发
+* 2020-11-02 支持redis
+
 ## Gin1.0.0主要特性
 * 强劲内核，基于Gin框架打造
 * mvc框架支持
@@ -19,9 +24,10 @@
 > mysql5.7+
 ## 使用手册 
 ### 安装教程
-第一步：git clone https://github.com/gincmf-team/gincmf
-第二步：下载全部依赖 go get -u  
-第三步：运行 默认端口为8000
+第一步：git clone https://github.com/gincmf-team/gincmf  
+第二步：清除缓存 go mod tidy  
+第三步：下载全部依赖 go get -u  
+第四步：运行默认端口为4000  
 ### 路径解释
 gincmf  
 |-app //应用目录  
