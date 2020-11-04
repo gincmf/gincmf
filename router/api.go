@@ -4,6 +4,10 @@ import (
 	"gincmf/app/controller/api/admin"
 	"gincmf/app/controller/common"
 	"gincmf/app/middleware"
+	"gincmf/app/model"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-gonic/gin"
+
 	cmf "github.com/gincmf/cmf/bootstrap"
 )
 
@@ -25,8 +29,23 @@ func ApiListenRouter() {
 		adminGroup.Post("/auth_access", new(admin.AuthAccessController).Store)
 	}
 
+	// 清除缓存
+	cmf.Get("/api/clear", func(c *gin.Context) {
+		session := sessions.Default(c)
+		session.Clear()
+		session.Save()
+		c.JSON(200,model.ReturnData{
+			Code: 1,
+			Data: nil,
+			Msg: "清除成功！",
+		})
+	})
+
 	// 获取当前用户信息
 	cmf.Get("/api/currentUser", middleware.ValidationBearerToken, middleware.ValidationAdmin, new(admin.UserController).CurrentUser)
+
+
+	cmf.Get("/test",new(admin.TestController).Get)
 
 	common.RegisterOauthRouter()
 }

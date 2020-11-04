@@ -10,10 +10,5 @@ func AutoMigrate() {
 	new(asset).AutoMigrate()
 	new(role).AutoMigrate()
 	new(authAccess).AutoMigrate()
-	new(AlipayAuth).AutoMigrate()
-	new(merchant).AutoMigrate()
-
-	go func() {
-		new(AdminMenu).AutoMigrate()
-	}()
+	new(AdminMenu).AutoMigrate()
 }

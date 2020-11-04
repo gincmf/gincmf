@@ -15,7 +15,7 @@ type role struct {
 }
 
 func (_ *role) AutoMigrate() {
-	cmf.Db.AutoMigrate(&model.Role{})
+	_ = cmf.NewDb().AutoMigrate(&model.Role{})
 
 	role := []model.Role{
 		model.Role{
@@ -36,10 +36,10 @@ func (_ *role) AutoMigrate() {
 
 	// 添加角色权限
 	for _,v := range role{
-		cmf.Db.Where(model.Role{Name: v.Name}).FirstOrCreate(&v)
+		cmf.NewDb().Where(model.Role{Name: v.Name}).FirstOrCreate(&v)
 	}
 
 	// 添加role_user关系表
-	cmf.Db.AutoMigrate(&model.RoleUser{})
+	cmf.NewDb().AutoMigrate(&model.RoleUser{})
 
 }

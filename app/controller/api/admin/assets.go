@@ -71,8 +71,8 @@ func (rest *AssetsController) Get(c *gin.Context) {
 	}
 
 	var total int64 = 0
-	cmf.Db.Where(query, queryArgs...).Find(&assets).Count(&total)
-	result := cmf.Db.Where(query, queryArgs...).Limit(intPageSize).Offset((intCurrent - 1) * intPageSize).Order("id desc").Find(&assets)
+	cmf.NewDb().Where(query, queryArgs...).Find(&assets).Count(&total)
+	result := cmf.NewDb().Where(query, queryArgs...).Limit(intPageSize).Offset((intCurrent - 1) * intPageSize).Order("id desc").Find(&assets)
 
 	if result.RowsAffected == 0 {
 		rest.rc.Error(c, "该页码内容不存在！", nil)
@@ -201,7 +201,7 @@ func (rest *AssetsController) Delete(c *gin.Context) {
 
 		fmt.Println("Id", rewrite.Id)
 
-		result := cmf.Db.First(&asset, rewrite.Id)
+		result := cmf.NewDb().First(&asset, rewrite.Id)
 		if result.RowsAffected == 0 {
 			rest.rc.Error(c, "该内容不存在！", nil)
 			return
@@ -210,13 +210,13 @@ func (rest *AssetsController) Delete(c *gin.Context) {
 		asset.Id = rewrite.Id
 		asset.Status = 0
 
-		if err := cmf.Db.Save(asset).Error; err != nil {
+		if err := cmf.NewDb().Save(asset).Error; err != nil {
 			rest.rc.Error(c, "删除失败！", nil)
 			return
 		}
 	} else {
 		fmt.Println("ids", ids)
-		if err := cmf.Db.Model(&asset).Where("id IN (?)", ids).Updates(map[string]interface{}{"status": 0}).Error; err != nil {
+		if err := cmf.NewDb().Model(&asset).Where("id IN (?)", ids).Updates(map[string]interface{}{"status": 0}).Error; err != nil {
 			rest.rc.Error(c, "删除失败！", nil)
 			return
 		}
@@ -352,7 +352,7 @@ func handleUpload(c *gin.Context, file *multipart.FileHeader, fileType string)  
 
 	fileTypeInt, _ := strconv.Atoi(fileType)
 	//保存到数据库
-	cmf.Db.Create(&model.Asset{
+	cmf.NewDb().Create(&model.Asset{
 		UserId:     userIdInt,
 		FileSize:   fileSize,
 		CreateAt:   time.Now().Unix(),

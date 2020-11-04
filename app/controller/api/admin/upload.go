@@ -108,7 +108,7 @@ func (rest *UploadController) Store(c *gin.Context) {
 	uploadSettingValue, _ := json.Marshal(uploadSetting)
 	fmt.Println("uploadSettingValue", string(uploadSettingValue))
 
-	cmf.Db.Model(&model.Option{}).Where("option_name = ?","upload_setting").Update("option_value", string(uploadSettingValue))
+	cmf.NewDb().Model(&model.Option{}).Where("option_name = ?","upload_setting").Update("option_value", string(uploadSettingValue))
 
 	rest.rc.Success(c, "修改成功",uploadSetting)
 }
