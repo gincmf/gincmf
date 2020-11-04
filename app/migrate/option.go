@@ -12,16 +12,16 @@ type option struct {
 }
 
 func (m *option) AutoMigrate() {
-	cmf.Db.AutoMigrate(&model.Option{})
-	siteResult := cmf.Db.First(&model.Option{}, "option_name = ?", "site_info") // 查询
+	_ = cmf.NewDb().AutoMigrate(&model.Option{})
+	siteResult := cmf.NewDb().First(&model.Option{}, "option_name = ?", "site_info") // 查询
 	if siteResult.Error != nil {
 		//初始化默认json
 		siteInfo := &model.SiteInfo{}
 		siteInfoValue, _ := json.Marshal(siteInfo)
-		cmf.Db.Create(&model.Option{AutoLoad: 1, OptionName: "site_info", OptionValue: string(siteInfoValue)})
+		cmf.NewDb().Create(&model.Option{AutoLoad: 1, OptionName: "site_info", OptionValue: string(siteInfoValue)})
 	}
 
-	uploadResult := cmf.Db.First(&model.Option{}, "option_name = ?", "upload_setting") // 查询
+	uploadResult := cmf.NewDb().First(&model.Option{}, "option_name = ?", "upload_setting") // 查询
 	if uploadResult.Error != nil {
 		//初始化默认json
 		uploadSetting := &model.UploadSetting{
@@ -48,6 +48,6 @@ func (m *option) AutoMigrate() {
 		}
 		uploadSettingValue, _ := json.Marshal(uploadSetting)
 		fmt.Println("uploadSettingValue", string(uploadSettingValue))
-		cmf.Db.Create(&model.Option{AutoLoad: 1, OptionName: "upload_setting", OptionValue: string(uploadSettingValue)})
+		cmf.NewDb().Create(&model.Option{AutoLoad: 1, OptionName: "upload_setting", OptionValue: string(uploadSettingValue)})
 	}
 }

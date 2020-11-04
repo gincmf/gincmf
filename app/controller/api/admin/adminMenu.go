@@ -17,7 +17,7 @@ type MenuController struct{}
 
 func (rest *MenuController) Get(c *gin.Context) {
 	var adminMenu []model.AdminMenu
-	result := cmf.Db.Where("path <> ?", "").Order("list_order").Find(&adminMenu)
+	result := cmf.NewDb().Where("path <> ?", "").Order("list_order").Find(&adminMenu)
 
 	if result.RowsAffected == 0 {
 		controller.RestController{}.Error(c, "暂无菜单,请联系管理员添加！", nil)

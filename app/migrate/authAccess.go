@@ -16,6 +16,6 @@ type authAccess struct {
 
 
 func (_ *authAccess) AutoMigrate() {
-	cmf.Db.AutoMigrate(model.AuthAccess{})
+	_ = cmf.NewDb().AutoMigrate(model.AuthAccess{})
 }
 

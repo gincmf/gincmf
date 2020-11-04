@@ -10,5 +10,5 @@ type log struct {
 }
 
 func (_ *log) AutoMigrate() {
-	cmf.Db.AutoMigrate(&model.Log{})
+	_ = cmf.NewDb().AutoMigrate(&model.Log{})
 }

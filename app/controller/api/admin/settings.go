@@ -27,7 +27,7 @@ type SettingsController struct {
  */
 func (rest *SettingsController) Get(c *gin.Context) {
 	option := &model.Option{}
-	siteResult := cmf.Db.First(option, "option_name = ?", "site_info") // 查询
+	siteResult := cmf.NewDb().First(option, "option_name = ?", "site_info") // 查询
 	if siteResult.RowsAffected > 0 {
 		rest.rc.Success(c, "获取成功", option)
 	} else {
@@ -85,7 +85,7 @@ func (rest *SettingsController) Store(c *gin.Context) {
 	}
 	siteInfoValue, _ := json.Marshal(params)
 	fmt.Println("siteInfoValue", string(siteInfoValue))
-	cmf.Db.Model(&model.Option{}).Where("option_name = ?", "site_info").Update("option_value", string(siteInfoValue))
+	cmf.NewDb().Model(&model.Option{}).Where("option_name = ?", "site_info").Update("option_value", string(siteInfoValue))
 	rest.rc.Success(c, "修改成功", params)
 }
 
