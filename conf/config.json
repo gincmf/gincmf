@@ -24,5 +24,15 @@
       "prefix": "cmf_",
       "authcode": "XVlBzgbaiCMRAjWwhT"
     }
+  },
+  "qiniu": {
+    "enabled":true,
+    "accessKey": "RUJBQZ7AnKFbt1PJi2-HStPJUBrUc3JYWKHH6HmY",
+    "secretKey": "HYG1t6wxGOggKyNrmroKEcFnQyAqxANqPTXFGcTq",
+    "isHttps": false,
+    "domain": "v.hji5.com",
+    "bucket": "vlog",
+    "zone": "huadong",
+    "isCdn": false
   }
 }

@@ -15,6 +15,8 @@ import (
 	"time"
 )
 
+var PublicPath string
+
 //获取当前登录管理员id
 func CurrentAdminId(c *gin.Context) string {
 	userId, _ := c.Get("user_id")
